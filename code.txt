@@ -1,0 +1,74 @@
+#include <ESP8266WiFi.h>
+#include <BlynkSimpleEsp8266.h>
+#include <SMTPClient.h>
+
+// Replace with your network credentials
+const char* ssid = "your_SSID";
+const char* password = "your_PASSWORD";
+
+// Blynk Auth Token
+char auth[] = "your_BLYNK_AUTH_TOKEN";
+
+// Gmail credentials
+const char* smtp_server = "smtp.gmail.com";
+const int smtp_port = 587;
+const char* email_user = "your_email@gmail.com";
+const char* email_password = "your_email_password";
+
+// Sensor pin
+const int pirPin = D1;
+bool motionDetected = false;
+
+// Blynk setup
+BlynkTimer timer;
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(pirPin, INPUT);
+  
+  // Connect to Wi-Fi
+  WiFi.begin(ssid, password);
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.println("Connecting to WiFi...");
+  }
+  Serial.println("Connected to WiFi");
+
+  // Blynk connection
+  Blynk.begin(auth, ssid, password);
+
+  // Start timer to check motion sensor
+  timer.setInterval(1000L, checkMotion);
+}
+
+void loop() {
+  Blynk.run();
+  timer.run();
+}
+
+void checkMotion() {
+  motionDetected = digitalRead(pirPin);
+  if (motionDetected) {
+    Serial.println("Motion detected!");
+    Blynk.notify("Intrusion detected!");
+    sendEmailAlert();
+  }
+}
+
+void sendEmailAlert() {
+  SMTPClient smtp;
+  smtp.setServer(smtp_server, smtp_port);
+  smtp.setUser(email_user);
+  smtp.setPassword(email_password);
+
+  smtp.setSender(email_user);
+  smtp.setRecipient(email_user);
+  smtp.setSubject("Home Security Alert");
+  smtp.setMessage("Motion has been detected in your home!");
+
+  if (smtp.send()) {
+    Serial.println("Email sent successfully!");
+  } else {
+    Serial.println("Email sending failed.");
+  }
+}

@@ -1,0 +1,11 @@
+Project Explanation
+Home Security System Using Blynk and Gmail Notification Alerts
+
+This project involves creating a home security system that utilizes the Blynk app for remote monitoring and control. The system will employ various sensors to detect unauthorized access and send real-time notifications via Gmail whenever an intrusion is detected.
+
+Key Features:
+
+Blynk App Integration: Allows users to monitor sensor status and control devices remotely.
+Gmail Notifications: Sends email alerts when an intrusion is detected, ensuring users are promptly informed.
+Sensor Components: Utilizes components such as PIR motion sensors, door/window sensors, and possibly a camera for added security.
+Microcontroller: Typically based on an ESP8266 or Arduino, which connects to Wi-Fi to communicate with the Blynk app and send emails.
